@@ -3,6 +3,7 @@ from qiskit.quantum_info import Operator
 from qiskit_aer import AerSimulator
 import numpy as np
 
+
 # Example unitary matrix
 unitary_matrix = np.array([[0, 1], 
                            [1, 0]])
