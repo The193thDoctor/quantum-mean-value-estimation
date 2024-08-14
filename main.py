@@ -1,31 +1,34 @@
 from qiskit import QuantumCircuit, transpile, QuantumRegister, AncillaRegister
-from qiskit.quantum_info import Operator
 from qiskit_aer import AerSimulator
 import numpy as np
+import json
+
+from oracle import BaseOracle, RyanOracle, SearchOracle
+from grover import construct_grover_circuit
+
+json_path = 'test_case/2.json'
+num_iterations = 5
 
 
-# Example unitary matrix
-unitary_matrix = np.array([[0, 1], 
-                           [1, 0]])
+def generate_oracle(oracle_class, json_path):
+    with open(json_path, 'r') as f:
+        samples = json.load(f)['samples']
+    num_qubits = int(np.ceil(np.log2(len(samples))))
+    if 2**num_qubits < len(samples):
+        print('Number of samples is not a power of 2, zero-padding the samples')
+        samples = np.pad(samples, (0, 2**num_qubits - len(samples)))
+    oracle = oracle_class(num_qubits)
+    oracle.set_oracle(samples)
+    return oracle
 
-# Create a unitary gate
-unitary_gate = Operator(unitary_matrix)
 
-# Create a quantum register with 2 data qubits and 1 ancilla qubit
-qr = QuantumRegister(2, 'q')
-anc = AncillaRegister(1, 'anc')
-qc = QuantumCircuit(qr, anc)
+oracle = generate_oracle(oracle_class=SearchOracle, json_path=json_path)
+qc = construct_grover_circuit(oracle, num_iterations)
 
-# Apply the unitary gate to qubits 0 and 1
-qc.unitary(unitary_gate, [qr[0]], label='U')
+simulator = AerSimulator()
+qc = transpile(qc, simulator)
 
-# Use the ancilla qubit in another operation, e.g., a CNOT
-qc.cx(qr[0], anc[0])
-
-# Visualize the circuit
-print(qc)
-
-# Print ancillas in the circuit
-print("Ancilla qubits:", qc.ancillas)
-
-# work in progress
+result = simulator.run(qc).result()
+for t in range(num_iterations+1):
+    statevector = result.data()[f't={t}']
+    print(f"Statevector at t={t}:", statevector)
