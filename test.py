@@ -1,46 +1,25 @@
 import matplotlib.pyplot as plt
-from matplotlib.widgets import Button
+import numpy as np
 
-# Example data: list of lists of 2D coordinates
-coordinates = [
-    [(1, 2), (2, 3), (3, 4)],
-    [(4, 5), (5, 6), (6, 7)],
-    [(7, 8), (8, 9), (9, 10)]
-]
+# Generate random data
+x = np.random.rand(50)
+y = np.random.rand(50)
+colors = np.random.rand(50)  # Values to map to colors
+print(colors)
 
-# Initial index
-index = [0]
-
-# Plot the initial scatter plot
+# Create a figure and axis
 fig, ax = plt.subplots()
-scatter = ax.scatter(*zip(*coordinates[index[0]]))
-plt.subplots_adjust(bottom=0.2)
+cmap = plt.get_cmap('tab10')
+print(cmap(0.1))
+print(cmap(int(1)))
+print(cmap(float(1)))
+print(cmap(1.0))
 
-# Function to update the plot
-def update_plot():
-    ax.clear()
-    scatter = ax.scatter(*zip(*coordinates[index[0]]))
-    plt.draw()
+# Scatter plot with a colormap
+scatter = ax.scatter(x, y, c=colors, cmap='tab10')
 
-# Callback functions for the buttons
-def next(event):
-    if index[0] < len(coordinates) - 1:
-        index[0] += 1
-    update_plot()
+# Add a colorbar to show the color scale
+colorbar = plt.colorbar(scatter, ax=ax)
 
-def prev(event):
-    if index[0] > 0:
-        index[0] -= 1
-    update_plot()
-
-# Adding "Next" button
-ax_next = plt.axes([0.8, 0.05, 0.1, 0.075])
-btn_next = Button(ax_next, 'Next')
-btn_next.on_clicked(next)
-
-# Adding "Previous" button
-ax_prev = plt.axes([0.7, 0.05, 0.1, 0.075])
-btn_prev = Button(ax_prev, 'Previous')
-btn_prev.on_clicked(prev)
-
+# Show the plot
 plt.show()

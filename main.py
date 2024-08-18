@@ -7,7 +7,7 @@ from oracle import BaseOracle, RyanOracle, SearchOracle
 from grover import construct_grover_circuit
 from plot import plot1d
 
-json_path = 'test_case/2.json'
+json_path = 'test_case/1.json'
 num_iterations = 5
 
 
@@ -23,7 +23,7 @@ def generate_oracle(oracle_class, json_path):
     return oracle
 
 
-oracle = generate_oracle(oracle_class=SearchOracle, json_path=json_path)
+oracle = generate_oracle(oracle_class=RyanOracle, json_path=json_path)
 qc = construct_grover_circuit(oracle, num_iterations)
 
 simulator = AerSimulator()
@@ -34,6 +34,7 @@ state_vectors = []
 for t in range(num_iterations+1):
     state_vectors.append(result.data()[f't={t}'])
 
+print(state_vectors[0])
 plot1d(state_vectors)
 
 

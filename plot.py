@@ -7,7 +7,7 @@ matplotlib.use("TkAgg")
 
 cmap = plt.get_cmap('tab10')
 
-index = 0
+_RADIUS = 1.2
 
 # '1d' refers to the fact we are estimating mean of single variable
 def plot1d(state_vectors):
@@ -23,30 +23,34 @@ def plot1d(state_vectors):
     state_vectors *= np.sqrt(num_elements) # scale the state vector
     reals = np.real(state_vectors)
     imags = np.imag(state_vectors)
-
+    index = 0
+    colors = np.arange(num_elements) % 10
 
     fig, ax = plt.subplots()
     plt.subplots_adjust(bottom=0.2)
 
     def update_plot(reals, imags):
         ax.clear()
-        ax.scatter(reals, imags, s=100)
+        for i in range(num_elements):
+            ax.plot([0, reals[i]], [0, imags[i]], color=cmap(i % 10))
+        ax.scatter(reals, imags, c=colors, cmap='tab10', s=100)
+        ax.text(0.95, 0.95, f'Index: {index}',
+                transform=ax.transAxes, fontsize=12,
+                verticalalignment='top', horizontalalignment='right',
+                bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
+        ax.set_xlim(-_RADIUS, _RADIUS)
+        ax.set_ylim(-_RADIUS, _RADIUS)
         plt.draw()
 
 
-    print(reals[0])
-    print('hi')
-    print(imags[0])
-    print(reals)
-
     def next(event):
-        global index
+        nonlocal index
         if index < num_iterations:
             index += 1
         update_plot(reals[index], imags[index])
 
     def prev(event):
-        global index
+        nonlocal index
         if index > 0:
             index -= 1
         update_plot(reals[index], imags[index])
@@ -61,6 +65,15 @@ def plot1d(state_vectors):
     btn_prev = Button(ax_prev, 'Previous')
     btn_prev.on_clicked(prev)
 
+    for i in range(num_elements):
+        ax.plot([0, reals[index][i]], [0, imags[index][i]], color=cmap(i % 10))
+    ax.scatter(reals[index], imags[index], c=colors, cmap='tab10', s=100)
+    ax.text(0.95, 0.95, f'Index: {index}',
+            transform=ax.transAxes, fontsize=12,
+            verticalalignment='top', horizontalalignment='right',
+            bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
+    ax.set_xlim(-_RADIUS, _RADIUS)
+    ax.set_ylim(-_RADIUS, _RADIUS)
     plt.show()
 
 

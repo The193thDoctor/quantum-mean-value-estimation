@@ -24,6 +24,7 @@ def construct_grover_circuit(oracle:BaseOracle, num_iterations):
         qc.append(grover_op, qr[:] + anc[:])
 
     qc.save_statevector(label=f't={num_iterations}')
+    print(qc.decompose(reps=2).draw())
 
     return qc
 
