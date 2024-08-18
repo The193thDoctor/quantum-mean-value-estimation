@@ -5,6 +5,7 @@ import json
 
 from oracle import BaseOracle, RyanOracle, SearchOracle
 from grover import construct_grover_circuit
+from plot import plot1d
 
 json_path = 'test_case/2.json'
 num_iterations = 5
@@ -29,6 +30,10 @@ simulator = AerSimulator()
 qc = transpile(qc, simulator)
 
 result = simulator.run(qc).result()
+state_vectors = []
 for t in range(num_iterations+1):
-    statevector = result.data()[f't={t}']
-    print(f"Statevector at t={t}:", statevector)
+    state_vectors.append(result.data()[f't={t}'])
+
+plot1d(state_vectors)
+
+
