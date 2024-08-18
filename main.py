@@ -33,8 +33,6 @@ result = simulator.run(qc).result()
 state_vectors = []
 for t in range(num_iterations+1):
     state_vectors.append(result.data()[f't={t}'])
-
-print(state_vectors[0])
 plot1d(state_vectors)
 
 

@@ -13,6 +13,7 @@ def construct_grover_circuit(oracle:BaseOracle, num_iterations):
     qr = QuantumRegister(num_qubits, 'q')
     anc = AncillaRegister(num_ancillas, 'anc')
     qc = QuantumCircuit(qr, anc)
+    qc.save_statevector(label='init') # for sanity check in case
 
     # Apply Hadamard gates to all qubits
     qc.h(qr[:] + anc[:])
